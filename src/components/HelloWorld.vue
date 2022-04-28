@@ -1,114 +1,44 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br />
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener"
-        >vue-cli documentation</a
-      >.
-    </p>
-    <h3>Installed CLI Plugins</h3>
     <ul>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel"
-          target="_blank"
-          rel="noopener"
-          >babel</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-router"
-          target="_blank"
-          rel="noopener"
-          >router</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint"
-          target="_blank"
-          rel="noopener"
-          >eslint</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-typescript"
-          target="_blank"
-          rel="noopener"
-          >typescript</a
-        >
-      </li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li>
-        <a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a>
-      </li>
-      <li>
-        <a href="https://forum.vuejs.org" target="_blank" rel="noopener"
-          >Forum</a
-        >
-      </li>
-      <li>
-        <a href="https://chat.vuejs.org" target="_blank" rel="noopener"
-          >Community Chat</a
-        >
-      </li>
-      <li>
-        <a href="https://twitter.com/vuejs" target="_blank" rel="noopener"
-          >Twitter</a
-        >
-      </li>
-      <li>
-        <a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a>
-      </li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li>
-        <a href="https://router.vuejs.org" target="_blank" rel="noopener"
-          >vue-router</a
-        >
-      </li>
-      <li>
-        <a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a>
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/vue-devtools#vue-devtools"
-          target="_blank"
-          rel="noopener"
-          >vue-devtools</a
-        >
-      </li>
-      <li>
-        <a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener"
-          >vue-loader</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/vuejs/awesome-vue"
-          target="_blank"
-          rel="noopener"
-          >awesome-vue</a
+      <li v-for="article in articles" :key="article.id">
+        {{ article.title }} : {{ article.price }}{{ article.currency }}
+        <router-link :to="{ name: 'article', params: { id: article.id } }"
+          >See article</router-link
         >
       </li>
     </ul>
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 
 export default defineComponent({
   name: "HelloWorld",
   props: {
     msg: String,
+  },
+  data() {
+    return {
+      articles: [],
+    };
+  },
+  mounted() {
+    this.fetchArticles();
+  },
+  methods: {
+    fetchArticles: async function () {
+      let res = await fetch("http://localhost:3000/home", {
+        method: "GET",
+      })
+        .then((r) => r.json())
+        .catch((e) => {
+          console.log(e);
+        });
+      this.articles = res;
+    },
   },
 });
 </script>
@@ -120,13 +50,35 @@ h3 {
 }
 ul {
   list-style-type: none;
-  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+  margin: 0 10em;
 }
 li {
-  display: inline-block;
-  margin: 0 10px;
+  min-width: 200px;
+  min-height: 80px;
+  border: 2px solid #f6d33c;
+  border-radius: 8px;
+  line-height: 80px;
+  padding: 0 0.5em;
+}
+
+li:hover {
+  background-color: #f6d33c;
+  color: black;
+  box-shadow: 0px 0px 8px 0px #00000025;
 }
 a {
-  color: #42b983;
+  text-decoration: none;
+  color: black;
+  background-color: #f6d33c;
+  display: block;
+  width: fit-content;
+  height: 44px;
+  line-height: 44px;
+  padding: 0 0.5em;
+  border-radius: 8px;
+  margin: 0.5em auto;
 }
 </style>
