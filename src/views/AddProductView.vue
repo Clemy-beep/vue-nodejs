@@ -54,7 +54,7 @@ export default {
       })
         .then((r) => r.json())
         .catch((e) => console.log(e));
-      if (res.message === "Ok") this.response = "Data added successfully";
+      if (res.id) this.response = "Data added successfully";
     },
   },
 };

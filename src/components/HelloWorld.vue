@@ -30,13 +30,14 @@ export default defineComponent({
   },
   methods: {
     fetchArticles: async function () {
-      let res = await fetch("http://localhost:3000/home", {
+      let res = await fetch("http://localhost:3000/products", {
         method: "GET",
       })
         .then((r) => r.json())
         .catch((e) => {
           console.log(e);
         });
+      console.log(res);
       this.articles = res;
     },
   },
