@@ -32,6 +32,7 @@
     <input type="submit" value="Add" />
   </form>
   <div v-if="response !== ''">{{ response }}</div>
+  <router-link to="/">Back to list</router-link>
 </template>
 <script>
 export default {
@@ -70,7 +71,12 @@ export default {
       )
         .then((r) => r.json())
         .catch((e) => console.log(e));
-      if (res.message === "Ok") this.response = "Data updated successfully";
+      if (!res.id) {
+        this.response =
+          "A problem occured. This product has not been updated. Please try again later.";
+        return;
+      }
+      this.response = `Product n°${this.product.id} updated.`;
     },
   },
 };

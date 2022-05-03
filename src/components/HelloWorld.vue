@@ -1,15 +1,27 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <ul>
-      <li v-for="article in articles" :key="article.id">
-        {{ article.title }} : {{ article.price }}{{ article.currency }}
-        <router-link :to="{ name: 'article', params: { id: article.id } }"
-          >See article</router-link
-        >
-      </li>
-    </ul>
+    <form @submit.prevent="handleSubmit">
+      <label for="email">Email</label>
+      <input
+        required
+        type="email"
+        name="email"
+        id="email"
+        v-model="user.email"
+      />
+      <label for="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        id="password"
+        required
+        v-model="user.password"
+      />
+      <input type="submit" value="Connect" />
+    </form>
   </div>
+  <p v-if="error !== ''">{{ error }}</p>
 </template>
 
 <script>
@@ -22,23 +34,31 @@ export default defineComponent({
   },
   data() {
     return {
-      articles: [],
+      user: {},
+      error: "",
     };
   },
-  mounted() {
-    this.fetchArticles();
-  },
   methods: {
-    fetchArticles: async function () {
-      let res = await fetch("http://localhost:3000/products", {
-        method: "GET",
+    handleSubmit: async function () {
+      if (!(this.user.email && this.user.password)) {
+        this.error = "All fields required";
+        return;
+      }
+      let res = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        body: JSON.stringify(this.user),
+        headers: {
+          "Content-Type": "application/json",
+        },
       })
         .then((r) => r.json())
-        .catch((e) => {
-          console.log(e);
-        });
-      console.log(res);
-      this.articles = res;
+        .catch((e) => console.log(e));
+      if (!res.token) {
+        this.error = "Authentication failed";
+        return;
+      }
+      sessionStorage.setItem("token", res.token);
+      this.$router.push("/products");
     },
   },
 });
@@ -46,40 +66,38 @@ export default defineComponent({
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+input,
+label {
+  display: block;
+  margin: 0 auto;
 }
-ul {
-  list-style-type: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1em;
-  margin: 0 10em;
-}
-li {
-  min-width: 200px;
-  min-height: 80px;
-  border: 2px solid #f6d33c;
-  border-radius: 8px;
-  line-height: 80px;
-  padding: 0 0.5em;
+input {
+  height: 44px;
+  border-radius: 16px;
 }
 
-li:hover {
-  background-color: #f6d33c;
-  color: black;
-  box-shadow: 0px 0px 8px 0px #00000025;
+label {
+  font-size: 20px;
+  font-weight: 500;
+  padding: 0.5em;
 }
-a {
-  text-decoration: none;
-  color: black;
+
+input[type="email"],
+input[type="password"] {
+  border: 2px solid #f6d33c;
+}
+
+input[type="submit"] {
+  margin-top: 0.5em;
+  font-size: 16px;
+  border: none;
   background-color: #f6d33c;
-  display: block;
-  width: fit-content;
-  height: 44px;
-  line-height: 44px;
-  padding: 0 0.5em;
-  border-radius: 8px;
-  margin: 0.5em auto;
+  padding: 0.5em;
+  cursor: pointer;
+}
+
+input[type="submit"]:hover {
+  padding: 0.7em;
+  box-shadow: 0px 0px 4px 0px #00000035;
 }
 </style>

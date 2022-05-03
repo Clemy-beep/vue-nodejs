@@ -10,13 +10,22 @@
       >Edit</router-link
     >
     <button id="delete" @click="deleteProduct">Delete</button>
+    <router-link id="back" to="/">Back to list</router-link>
+    <teleport to="body">
+      <ConfirmDialog ref="confirmDialogue"></ConfirmDialog>
+    </teleport>
   </div>
 </template>
 <script>
+import ConfirmDialog from "../components/ConfirmDialog.vue";
 export default {
+  components: {
+    ConfirmDialog,
+  },
   data() {
     return {
       article: {},
+      showModal: false,
     };
   },
   mounted() {
@@ -35,8 +44,13 @@ export default {
       this.article = res;
     },
     deleteProduct: async function () {
-      let conf = confirm("Are you sure you want to delete this product?");
-      if (!conf) return;
+      const ok = await this.$refs.confirmDialogue.show({
+        title: "Delete Page",
+        message:
+          "Are you sure you want to delete this product? It cannot be undone.",
+        okButton: "Delete Forever",
+      });
+      if (!ok) return;
       let res = await fetch(
         `http://localhost:3000/delete/${this.$route.params.id}`,
         {
@@ -45,7 +59,7 @@ export default {
       )
         .then((r) => r.json())
         .catch((e) => console.log(e));
-      if (res.message !== "Ok") {
+      if (!res.id) {
         console.log(res);
         alert("A problem was encountered.");
         return;
@@ -95,9 +109,15 @@ a:hover {
   border-radius: 8px;
   cursor: pointer;
   color: white;
+  font-size: 16px;
 }
 
 #delete:hover {
   padding: 0.6em;
+}
+
+#back {
+  background-color: rgb(141, 199, 201);
+  line-height: 38px;
 }
 </style>
