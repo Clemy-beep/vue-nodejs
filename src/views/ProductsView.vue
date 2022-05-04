@@ -5,7 +5,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import { defineComponent } from "vue";
 import ProductList from "../components/ProductList.vue";
 export default defineComponent({
@@ -13,6 +13,7 @@ export default defineComponent({
   components: {
     ProductList,
   },
+
   data() {
     return {
       open: Boolean(),
