@@ -3,7 +3,8 @@
     <router-link to="/">Home</router-link> |
     <router-link to="/about">About</router-link> |
     <router-link to="/add-product">Add a product</router-link> |
-    <router-link to="/signin">Sign up</router-link>
+    <router-link to="/signin">Sign up</router-link> |
+    <router-link to="/send">Send CSV file</router-link>
   </nav>
   <router-view />
 </template>

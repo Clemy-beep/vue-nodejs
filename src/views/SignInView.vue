@@ -37,6 +37,10 @@ export default {
       response: "",
     };
   },
+
+  mounted() {
+    sessionStorage.clear();
+  },
   methods: {
     onFileChange: function () {
       const profilePic = this.$refs.profilePic.files[0];
